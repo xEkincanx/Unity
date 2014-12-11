@@ -20,15 +20,15 @@ public class Postman{
 		}
 	}
 	
-	
-	public void POST(string url ,string urlParams,Dictionary<string,string> body){
-		url = url + urlParams;
+	public HttpWebRequest createWebRequest(string url ,string method){
 		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
 		request.Credentials = CredentialCache.DefaultCredentials;
-		request.Method = "POST";
+		request.Method = method;
 		request.ContentType = "application/x-www-form-urlencoded";
-		
-		//Creating & Adding Body:
+		return request;
+	}
+	
+	public Stream createDataStream(Dictionary<string,string> body ,HttpWebRequest request){
 		string theBody = "";
 		foreach(KeyValuePair<string,string> bodyPart in body){
 			theBody = theBody + bodyPart.Key + "=" + bodyPart.Value + "&";
@@ -38,181 +38,70 @@ public class Postman{
 		Stream dataStream = request.GetRequestStream();
 		dataStream.Write(byteArray, 0,byteArray.Length);
 		dataStream.Close ();
-		
-		//Getting the Response
-		WebResponse response = request.GetResponse();
-		dataStream = response.GetResponseStream();
-		StreamReader reader = new StreamReader(dataStream);
-		string message = reader.ReadToEnd();
-		
-		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-		Debug.Log("Response: "+message); //CONSOLE MESSAGE !
+		return dataStream;
 	}
 	
-	public void POST(string url ,Dictionary<string,string> urlParams,Dictionary<string,string> body){
+	public string getResponse(HttpWebRequest request){
+		WebResponse response = request.GetResponse();
+		Stream backStream = response.GetResponseStream();
+		StreamReader reader = new StreamReader(backStream);
+		string message = reader.ReadToEnd();
+		reader.Close(); response.Close(); backStream.Close();
+		return message;
+	}
+	
+	public string addURLParams(string url,Dictionary<string,string> urlParams){
 		url = url + "?";
 		foreach(KeyValuePair<string,string> urlP in urlParams){
 			url = url + "&" + urlP.Key + "=" + urlP.Value;
 		}
-		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-		request.Credentials = CredentialCache.DefaultCredentials;
-		request.Method = "POST";
-		request.ContentType = "application/x-www-form-urlencoded";
-		
-		//Creating & Adding Body:
-		string theBody = "";
-		foreach(KeyValuePair<string,string> bodyPart in body){
-			theBody = theBody + bodyPart.Key + "=" + bodyPart.Value + "&";
-		}
-		byte[] byteArray = Encoding.UTF8.GetBytes(theBody);
-		request.ContentLength = byteArray.Length;
-		Stream dataStream = request.GetRequestStream();
-		dataStream.Write(byteArray, 0,byteArray.Length);
-		dataStream.Close ();
-		
-		//Getting the Response
-		WebResponse response = request.GetResponse();
-		dataStream = response.GetResponseStream();
-		StreamReader reader = new StreamReader(dataStream);
-		string message = reader.ReadToEnd();
-		
-		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-		Debug.Log("Response: "+message); //CONSOLE MESSAGE !
+		return url;
+	}
+	
+	public void POST(string url ,string urlParams,Dictionary<string,string> body){
+		HttpWebRequest request = createWebRequest(url+urlParams,"POST"); //Creating Request !
+		createDataStream(body,request); //Creating DataStream
+		Debug.Log("Response: "+getResponse(request)); //CONSOLE MESSAGE !
+	}
+	
+	public void POST(string url ,Dictionary<string,string> urlParams,Dictionary<string,string> body){
+		HttpWebRequest request = createWebRequest(addURLParams(url,urlParams),"POST"); //Creating Request !
+		createDataStream(body,request); //Creating DataStream
+		Debug.Log("Response: "+getResponse(request)); //CONSOLE MESSAGE !
 	}
 	
 	
 	public void GET(string url,Dictionary<string,string> urlParams){
-		url = url + "?";
-		foreach(KeyValuePair<string,string> urlP in urlParams){
-			url = url + "&" + urlP.Key + "=" + urlP.Value;
-		}
-		
-		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-		request.Credentials = CredentialCache.DefaultCredentials;
-		request.Method = "GET";
-		
-		//Getting the Response
-		WebResponse response = request.GetResponse ();
-		Stream dataStream = response.GetResponseStream ();
-		StreamReader reader = new StreamReader (dataStream);
-		string message = reader.ReadToEnd ();
-		
-		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-		Debug.Log ("Response: "+message); //CONSOLE MESSAGE !
+		HttpWebRequest request = createWebRequest(addURLParams(url,urlParams),"GET");
+		Debug.Log("Response: "+getResponse(request)); //CONSOLE MESSAGE !
 	}
 	
 	public void GET(string url,string urlParams){
-		url = url + urlParams;
-		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-		request.Credentials = CredentialCache.DefaultCredentials;
-		request.Method = "GET";
-		
-		//Getting the Response
-		WebResponse response = request.GetResponse ();
-		Stream dataStream = response.GetResponseStream ();
-		StreamReader reader = new StreamReader (dataStream);
-		string message = reader.ReadToEnd ();
-		
-		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-		Debug.Log ("Response: "+message); //CONSOLE MESSAGE !
+		HttpWebRequest request = createWebRequest(url+urlParams,"GET");
+		Debug.Log("Response: "+getResponse(request)); //CONSOLE MESSAGE !
 	}
 	
 	
 	public void DELETE(string url,Dictionary<string,string> urlParams){
-		url = url + "?";
-		foreach(KeyValuePair<string,string> urlP in urlParams){
-			url = url + "&" + urlP.Key + "=" + urlP.Value;
-		}
-		
-		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-		request.Credentials = CredentialCache.DefaultCredentials;
-		request.Method = "DELETE";
-		
-		//Getting the Response
-		WebResponse response = request.GetResponse ();
-		Stream dataStream = response.GetResponseStream ();
-		StreamReader reader = new StreamReader (dataStream);
-		string message = reader.ReadToEnd ();
-		
-		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-		Debug.Log ("Response: "+message); //CONSOLE MESSAGE !
+		HttpWebRequest request = createWebRequest(addURLParams(url,urlParams),"DELETE");
+		Debug.Log("Response: "+getResponse(request)); //CONSOLE MESSAGE !
 	}
 	
 	public void DELETE(string url,string urlParams){
-		url = url + urlParams;
-		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-		request.Credentials = CredentialCache.DefaultCredentials;
-		request.Method = "DELETE";
-		
-		//Getting the Response
-		WebResponse response = request.GetResponse ();
-		Stream dataStream = response.GetResponseStream ();
-		StreamReader reader = new StreamReader (dataStream);
-		string message = reader.ReadToEnd ();
-		
-		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-		Debug.Log ("Response: "+message); //CONSOLE MESSAGE !
+		HttpWebRequest request = createWebRequest(url+urlParams,"DELETE");
+		Debug.Log("Response: "+getResponse(request)); //CONSOLE MESSAGE !
 	}
 	
 	
 	public void PUT(string url ,string urlParams,Dictionary<string,string> body){
-		url = url + urlParams;
-		
-		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-		request.Credentials = CredentialCache.DefaultCredentials;
-		request.Method = "PUT";
-		request.ContentType = "application/x-www-form-urlencoded";
-		
-		//Creating & Adding Body:
-		string theBody = "";
-		foreach(KeyValuePair<string,string> bodyPart in body){
-			theBody = theBody + bodyPart.Key + "=" + bodyPart.Value + "&";
-		}
-		byte[] byteArray = Encoding.UTF8.GetBytes(theBody);
-		request.ContentLength = byteArray.Length;
-		Stream dataStream = request.GetRequestStream();
-		dataStream.Write(byteArray, 0,byteArray.Length);
-		dataStream.Close ();
-		
-		//Getting the Response
-		WebResponse response = request.GetResponse();
-		dataStream = response.GetResponseStream();
-		StreamReader reader = new StreamReader(dataStream);
-		string message = reader.ReadToEnd();
-		
-		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-		Debug.Log("Response: "+message); //CONSOLE MESSAGE !
+		HttpWebRequest request = createWebRequest(url+urlParams,"PUT"); //Creating Request !
+		createDataStream(body,request); //Creating DataStream
+		Debug.Log("Response: "+getResponse(request)); //CONSOLE MESSAGE !
 	}
 	
 	public void PUT(string url ,Dictionary<string,string> urlParams,Dictionary<string,string> body){
-		url = url + "?";
-		foreach(KeyValuePair<string,string> urlP in urlParams){
-			url = url + "&" + urlP.Key + "=" + urlP.Value;
-		}
-		
-		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-		request.Credentials = CredentialCache.DefaultCredentials;
-		request.Method = "PUT";
-		request.ContentType = "application/x-www-form-urlencoded";
-		
-		//Creating & Adding Body:
-		string theBody = "";
-		foreach(KeyValuePair<string,string> bodyPart in body){
-			theBody = theBody + bodyPart.Key + "=" + bodyPart.Value + "&";
-		}
-		byte[] byteArray = Encoding.UTF8.GetBytes(theBody);
-		request.ContentLength = byteArray.Length;
-		Stream dataStream = request.GetRequestStream();
-		dataStream.Write(byteArray, 0,byteArray.Length);
-		dataStream.Close ();
-		
-		//Getting the Response
-		WebResponse response = request.GetResponse();
-		dataStream = response.GetResponseStream();
-		StreamReader reader = new StreamReader(dataStream);
-		string message = reader.ReadToEnd();
-		
-		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-		Debug.Log("Response: "+message); //CONSOLE MESSAGE !
+		HttpWebRequest request = createWebRequest(addURLParams(url,urlParams),"PUT"); //Creating Request !
+		createDataStream(body,request); //Creating DataStream
+		Debug.Log("Response: "+getResponse(request)); //CONSOLE MESSAGE !
 	}
 }
