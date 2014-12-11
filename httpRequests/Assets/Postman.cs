@@ -23,28 +23,30 @@ public class Postman{
 	
 	public void POST(string url ,string urlParams,Dictionary<string,string> body){
 		url = url + urlParams;
-		foreach(KeyValuePair<string,string> key in body){
-			HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-			request.Credentials = CredentialCache.DefaultCredentials;
-			request.Method = "POST";
-			request.ContentType = "application/x-www-form-urlencoded";
-			
-			//Creating & Adding Body:
-			byte[] byteArray = Encoding.UTF8.GetBytes(key.Key+"="+key.Value);
-			request.ContentLength = byteArray.Length;
-			Stream dataStream = request.GetRequestStream ();
-			dataStream.Write(byteArray, 0,byteArray.Length);
-			dataStream.Close ();
-			
-			//Getting the Response
-			WebResponse response = request.GetResponse();
-			dataStream = response.GetResponseStream();
-			StreamReader reader = new StreamReader(dataStream);
-			string message = reader.ReadToEnd();
-			
-			reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-			Debug.Log("Response: "+message); //CONSOLE MESSAGE !
+		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+		request.Credentials = CredentialCache.DefaultCredentials;
+		request.Method = "POST";
+		request.ContentType = "application/x-www-form-urlencoded";
+		
+		//Creating & Adding Body:
+		string theBody = "";
+		foreach(KeyValuePair<string,string> bodyPart in body){
+			theBody = theBody + bodyPart.Key + "=" + bodyPart.Value + "&";
 		}
+		byte[] byteArray = Encoding.UTF8.GetBytes(theBody);
+		request.ContentLength = byteArray.Length;
+		Stream dataStream = request.GetRequestStream();
+		dataStream.Write(byteArray, 0,byteArray.Length);
+		dataStream.Close ();
+		
+		//Getting the Response
+		WebResponse response = request.GetResponse();
+		dataStream = response.GetResponseStream();
+		StreamReader reader = new StreamReader(dataStream);
+		string message = reader.ReadToEnd();
+		
+		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
+		Debug.Log("Response: "+message); //CONSOLE MESSAGE !
 	}
 	
 	public void POST(string url ,Dictionary<string,string> urlParams,Dictionary<string,string> body){
@@ -52,29 +54,30 @@ public class Postman{
 		foreach(KeyValuePair<string,string> urlP in urlParams){
 			url = url + "&" + urlP.Key + "=" + urlP.Value;
 		}
+		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+		request.Credentials = CredentialCache.DefaultCredentials;
+		request.Method = "POST";
+		request.ContentType = "application/x-www-form-urlencoded";
 		
-		foreach(KeyValuePair<string,string> key in body){
-			HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-			request.Credentials = CredentialCache.DefaultCredentials;
-			request.Method = "POST";
-			request.ContentType = "application/x-www-form-urlencoded";
-			
-			//Creating & Adding Body:
-			byte[] byteArray = Encoding.UTF8.GetBytes(key.Key+"="+key.Value);
-			request.ContentLength = byteArray.Length;
-			Stream dataStream = request.GetRequestStream ();
-			dataStream.Write(byteArray, 0,byteArray.Length);
-			dataStream.Close ();
-			
-			//Getting the Response
-			WebResponse response = request.GetResponse();
-			dataStream = response.GetResponseStream();
-			StreamReader reader = new StreamReader(dataStream);
-			string message = reader.ReadToEnd();
-			
-			reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-			Debug.Log("Response: "+message); //CONSOLE MESSAGE !
+		//Creating & Adding Body:
+		string theBody = "";
+		foreach(KeyValuePair<string,string> bodyPart in body){
+			theBody = theBody + bodyPart.Key + "=" + bodyPart.Value + "&";
 		}
+		byte[] byteArray = Encoding.UTF8.GetBytes(theBody);
+		request.ContentLength = byteArray.Length;
+		Stream dataStream = request.GetRequestStream();
+		dataStream.Write(byteArray, 0,byteArray.Length);
+		dataStream.Close ();
+		
+		//Getting the Response
+		WebResponse response = request.GetResponse();
+		dataStream = response.GetResponseStream();
+		StreamReader reader = new StreamReader(dataStream);
+		string message = reader.ReadToEnd();
+		
+		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
+		Debug.Log("Response: "+message); //CONSOLE MESSAGE !
 	}
 	
 	
@@ -154,28 +157,31 @@ public class Postman{
 	
 	public void PUT(string url ,string urlParams,Dictionary<string,string> body){
 		url = url + urlParams;
-		foreach(KeyValuePair<string,string> key in body){
-			HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-			request.Credentials = CredentialCache.DefaultCredentials;
-			request.Method = "PUT";
-			request.ContentType = "application/x-www-form-urlencoded";
-			
-			//Creating & Adding Body:
-			byte[] byteArray = Encoding.UTF8.GetBytes(key.Key+"="+key.Value);
-			request.ContentLength = byteArray.Length;
-			Stream dataStream = request.GetRequestStream ();
-			dataStream.Write(byteArray, 0,byteArray.Length);
-			dataStream.Close ();
-			
-			//Getting the Response
-			WebResponse response = request.GetResponse();
-			dataStream = response.GetResponseStream();
-			StreamReader reader = new StreamReader(dataStream);
-			string message = reader.ReadToEnd();
-			
-			reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-			Debug.Log("Response: "+message); //CONSOLE MESSAGE !
+		
+		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+		request.Credentials = CredentialCache.DefaultCredentials;
+		request.Method = "PUT";
+		request.ContentType = "application/x-www-form-urlencoded";
+		
+		//Creating & Adding Body:
+		string theBody = "";
+		foreach(KeyValuePair<string,string> bodyPart in body){
+			theBody = theBody + bodyPart.Key + "=" + bodyPart.Value + "&";
 		}
+		byte[] byteArray = Encoding.UTF8.GetBytes(theBody);
+		request.ContentLength = byteArray.Length;
+		Stream dataStream = request.GetRequestStream();
+		dataStream.Write(byteArray, 0,byteArray.Length);
+		dataStream.Close ();
+		
+		//Getting the Response
+		WebResponse response = request.GetResponse();
+		dataStream = response.GetResponseStream();
+		StreamReader reader = new StreamReader(dataStream);
+		string message = reader.ReadToEnd();
+		
+		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
+		Debug.Log("Response: "+message); //CONSOLE MESSAGE !
 	}
 	
 	public void PUT(string url ,Dictionary<string,string> urlParams,Dictionary<string,string> body){
@@ -184,27 +190,29 @@ public class Postman{
 			url = url + "&" + urlP.Key + "=" + urlP.Value;
 		}
 		
-		foreach(KeyValuePair<string,string> key in body){
-			HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
-			request.Credentials = CredentialCache.DefaultCredentials;
-			request.Method = "PUT";
-			request.ContentType = "application/x-www-form-urlencoded";
-			
-			//Creating & Adding Body:
-			byte[] byteArray = Encoding.UTF8.GetBytes(key.Key+"="+key.Value);
-			request.ContentLength = byteArray.Length;
-			Stream dataStream = request.GetRequestStream ();
-			dataStream.Write(byteArray, 0,byteArray.Length);
-			dataStream.Close ();
-			
-			//Getting the Response
-			WebResponse response = request.GetResponse();
-			dataStream = response.GetResponseStream();
-			StreamReader reader = new StreamReader(dataStream);
-			string message = reader.ReadToEnd();
-			
-			reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
-			Debug.Log("Response: "+message); //CONSOLE MESSAGE !
+		HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+		request.Credentials = CredentialCache.DefaultCredentials;
+		request.Method = "PUT";
+		request.ContentType = "application/x-www-form-urlencoded";
+		
+		//Creating & Adding Body:
+		string theBody = "";
+		foreach(KeyValuePair<string,string> bodyPart in body){
+			theBody = theBody + bodyPart.Key + "=" + bodyPart.Value + "&";
 		}
+		byte[] byteArray = Encoding.UTF8.GetBytes(theBody);
+		request.ContentLength = byteArray.Length;
+		Stream dataStream = request.GetRequestStream();
+		dataStream.Write(byteArray, 0,byteArray.Length);
+		dataStream.Close ();
+		
+		//Getting the Response
+		WebResponse response = request.GetResponse();
+		dataStream = response.GetResponseStream();
+		StreamReader reader = new StreamReader(dataStream);
+		string message = reader.ReadToEnd();
+		
+		reader.Close(); response.Close(); dataStream.Close(); //CLEANING MEMORY
+		Debug.Log("Response: "+message); //CONSOLE MESSAGE !
 	}
 }
